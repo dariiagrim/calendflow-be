@@ -1,6 +1,6 @@
 package service
 
-import "CalendFlowBE/pkg/chatgpt"
+import "dariiamoisol.com/CalendFlowBE/pkg/chatgpt"
 
 func mapChatbotMessagesToChatGPTMessages(chatbotMessages []ChatbotMessage) []chatgpt.Message {
 	var chatGPTMessages []chatgpt.Message

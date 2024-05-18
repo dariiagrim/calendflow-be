@@ -1,9 +1,10 @@
-package handler
+package CalendFlowBE
 
 import (
-	"CalendFlowBE/handler/dto"
-	"CalendFlowBE/pkg/chatgpt"
-	"CalendFlowBE/service"
+	"dariiamoisol.com/CalendFlowBE/handler"
+	"dariiamoisol.com/CalendFlowBE/handler/dto"
+	"dariiamoisol.com/CalendFlowBE/pkg/chatgpt"
+	"dariiamoisol.com/CalendFlowBE/service"
 	"encoding/json"
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"log"
@@ -25,13 +26,13 @@ func GenerateReply(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	chatbotReply, err := chatbotService.GenerateReply(r.Context(), mapDtoChatbotGenerateReplyRequestToParams(req))
+	chatbotReply, err := chatbotService.GenerateReply(r.Context(), handler.MapDtoChatbotGenerateReplyRequestToParams(req))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	response := mapChatbotReplyToDtoChatbotGenerateReply(*chatbotReply)
+	response := handler.MapChatbotReplyToDtoChatbotGenerateReply(*chatbotReply)
 
 	respData, err := json.Marshal(response)
 	if err != nil {

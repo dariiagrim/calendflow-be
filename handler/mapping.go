@@ -1,20 +1,20 @@
 package handler
 
 import (
-	"CalendFlowBE/handler/dto"
-	"CalendFlowBE/service"
+	"dariiamoisol.com/CalendFlowBE/handler/dto"
+	"dariiamoisol.com/CalendFlowBE/service"
 )
 
-func mapDtoChatbotGenerateReplyRequestToParams(ChatbotGenerateReplyRequest dto.ChatbotGenerateReplyRequest) service.ChatbotGenerateReplyParams {
+func MapDtoChatbotGenerateReplyRequestToParams(ChatbotGenerateReplyRequest dto.ChatbotGenerateReplyRequest) service.ChatbotGenerateReplyParams {
 	params := service.ChatbotGenerateReplyParams{
-		Messages:        mapDtoChatbotMessagesToChatbotMessages(ChatbotGenerateReplyRequest.Messages),
-		TodayEventsData: mapDtoChatbotEventDataToChatbotEventData(ChatbotGenerateReplyRequest.TodayEventsData),
-		CalendarsData:   mapDtoChatbotCalendarDataToChatbotCalendarData(ChatbotGenerateReplyRequest.CalendarsData),
+		Messages:        MapDtoChatbotMessagesToChatbotMessages(ChatbotGenerateReplyRequest.Messages),
+		TodayEventsData: MapDtoChatbotEventDataToChatbotEventData(ChatbotGenerateReplyRequest.TodayEventsData),
+		CalendarsData:   MapDtoChatbotCalendarDataToChatbotCalendarData(ChatbotGenerateReplyRequest.CalendarsData),
 	}
 	return params
 }
 
-func mapDtoChatbotMessagesToChatbotMessages(dtoChatbotMessages []dto.ChatbotMessage) []service.ChatbotMessage {
+func MapDtoChatbotMessagesToChatbotMessages(dtoChatbotMessages []dto.ChatbotMessage) []service.ChatbotMessage {
 	var chatbotMessages []service.ChatbotMessage
 	for _, dtoChatbotMessage := range dtoChatbotMessages {
 		chatbotMessage := service.ChatbotMessage{
@@ -26,7 +26,7 @@ func mapDtoChatbotMessagesToChatbotMessages(dtoChatbotMessages []dto.ChatbotMess
 	return chatbotMessages
 }
 
-func mapDtoChatbotEventDataToChatbotEventData(dtoChatbotEventData []dto.ChatbotEventData) []service.ChatbotEventData {
+func MapDtoChatbotEventDataToChatbotEventData(dtoChatbotEventData []dto.ChatbotEventData) []service.ChatbotEventData {
 	var chatbotEventData []service.ChatbotEventData
 	for _, dtoChatbotEvent := range dtoChatbotEventData {
 		chatbotEvent := service.ChatbotEventData{
@@ -42,7 +42,7 @@ func mapDtoChatbotEventDataToChatbotEventData(dtoChatbotEventData []dto.ChatbotE
 	return chatbotEventData
 }
 
-func mapDtoChatbotCalendarDataToChatbotCalendarData(dtoChatbotCalendarData []dto.ChatbotCalendarData) []service.ChatbotCalendarData {
+func MapDtoChatbotCalendarDataToChatbotCalendarData(dtoChatbotCalendarData []dto.ChatbotCalendarData) []service.ChatbotCalendarData {
 	var chatbotCalendarData []service.ChatbotCalendarData
 	for _, dtoChatbotCalendar := range dtoChatbotCalendarData {
 		chatbotCalendar := service.ChatbotCalendarData{
@@ -54,7 +54,7 @@ func mapDtoChatbotCalendarDataToChatbotCalendarData(dtoChatbotCalendarData []dto
 	return chatbotCalendarData
 }
 
-func mapChatbotReplyToDtoChatbotGenerateReply(chatbotReply service.ChatbotReply) dto.ChatbotGenerateReplyResponse {
+func MapChatbotReplyToDtoChatbotGenerateReply(chatbotReply service.ChatbotReply) dto.ChatbotGenerateReplyResponse {
 	return dto.ChatbotGenerateReplyResponse{
 		Id:                        chatbotReply.Id,
 		CalendarId:                chatbotReply.CalendarId,

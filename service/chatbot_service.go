@@ -1,8 +1,8 @@
 package service
 
 import (
-	"CalendFlowBE/pkg/chatgpt"
 	"context"
+	"dariiamoisol.com/CalendFlowBE/pkg/chatgpt"
 	"encoding/json"
 	"fmt"
 	"log"

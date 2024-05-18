@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"CalendFlowBE/service"
+	"dariiamoisol.com/CalendFlowBE/service"
 	"time"
 )
 
