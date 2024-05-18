@@ -2,39 +2,32 @@ package handler
 
 import (
 	"CalendFlowBE/handler/dto"
+	"CalendFlowBE/pkg/chatgpt"
 	"CalendFlowBE/service"
 	"encoding/json"
-	"github.com/fasthttp/router"
-	"github.com/valyala/fasthttp"
+	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"log"
+	"net/http"
+	"os"
 )
 
-type ChatbotHandler struct {
-	chatbotService *service.ChatbotService
+func init() {
+	functions.HTTP("GenerateReply", GenerateReply)
 }
 
-func NewChatbotHandler(chatbotService *service.ChatbotService) *ChatbotHandler {
-	return &ChatbotHandler{
-		chatbotService: chatbotService,
-	}
-}
+func GenerateReply(w http.ResponseWriter, r *http.Request) {
+	chatGPTClient := chatgpt.NewClient(http.Client{}, os.Getenv("OPENAI_API_KEY"))
+	chatbotService := service.NewChatbotService(chatGPTClient)
 
-func RegisterChatbotHandler(r *router.Router, handler *ChatbotHandler) {
-	r.POST("/chatbot/reply", handler.GenerateReply)
-}
-
-func (h *ChatbotHandler) GenerateReply(ctx *fasthttp.RequestCtx) {
 	var req dto.ChatbotGenerateReplyRequest
-	if err := json.Unmarshal(ctx.PostBody(), &req); err != nil {
-		ctx.SetStatusCode(fasthttp.StatusBadRequest)
-		ctx.SetBodyString(err.Error())
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	chatbotReply, err := h.chatbotService.GenerateReply(ctx, mapDtoChatbotGenerateReplyRequestToParams(req))
+	chatbotReply, err := chatbotService.GenerateReply(r.Context(), mapDtoChatbotGenerateReplyRequestToParams(req))
 	if err != nil {
-		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
-		ctx.SetBodyString(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -42,12 +35,11 @@ func (h *ChatbotHandler) GenerateReply(ctx *fasthttp.RequestCtx) {
 
 	respData, err := json.Marshal(response)
 	if err != nil {
-		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
-		ctx.SetBodyString(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Print(err)
 		return
 	}
 
-	ctx.SetStatusCode(fasthttp.StatusOK)
-	ctx.SetBody(respData)
+	w.WriteHeader(http.StatusOK)
+	w.Write(respData)
 }

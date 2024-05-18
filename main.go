@@ -1,24 +1,18 @@
 package main
 
 import (
-	"CalendFlowBE/handler"
-	"CalendFlowBE/pkg/chatgpt"
-	"CalendFlowBE/service"
-	"github.com/fasthttp/router"
-	"github.com/valyala/fasthttp"
+	_ "CalendFlowBE/handler"
+	"github.com/GoogleCloudPlatform/functions-framework-go/funcframework"
 	"log"
-	"net/http"
 	"os"
 )
 
 func main() {
-	r := router.New()
-
-	chatGPTClient := chatgpt.NewClient(http.Client{}, os.Getenv("OPENAI_API_KEY"))
-	chatbotService := service.NewChatbotService(chatGPTClient)
-	chatbotHandler := handler.NewChatbotHandler(chatbotService)
-
-	handler.RegisterChatbotHandler(r, chatbotHandler)
-
-	log.Fatal(fasthttp.ListenAndServe(":8080", r.Handler))
+	port := "8080"
+	if envPort := os.Getenv("PORT"); envPort != "" {
+		port = envPort
+	}
+	if err := funcframework.Start(port); err != nil {
+		log.Fatalf("funcframework.Start: %v\n", err)
+	}
 }
