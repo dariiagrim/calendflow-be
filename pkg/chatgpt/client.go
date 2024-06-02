@@ -78,6 +78,8 @@ func (c *Client) sendRequest(ctx context.Context, method string, path string, re
 		return nil, err
 	}
 
+	fmt.Println(string(requestPayload))
+
 	req, err := c.createRequest(ctx, method, path, requestPayload)
 	if err != nil {
 		return nil, err

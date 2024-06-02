@@ -6,6 +6,7 @@ import (
 	"dariiamoisol.com/CalendFlowBE/pkg/chatgpt"
 	"dariiamoisol.com/CalendFlowBE/service"
 	"encoding/json"
+	"fmt"
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"log"
 	"net/http"
@@ -26,13 +27,15 @@ func GenerateReply(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println(req)
+
 	chatbotReply, err := chatbotService.GenerateReply(r.Context(), handler.MapDtoChatbotGenerateReplyRequestToParams(req))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	response := handler.MapChatbotReplyToDtoChatbotGenerateReply(*chatbotReply)
+	response := handler.MapChatbotReplyToDtoChatbotGenerateReplyResponse(*chatbotReply)
 
 	respData, err := json.Marshal(response)
 	if err != nil {
@@ -40,6 +43,8 @@ func GenerateReply(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
+
+	fmt.Println(string(respData))
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respData)

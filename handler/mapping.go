@@ -7,14 +7,29 @@ import (
 
 func MapDtoChatbotGenerateReplyRequestToParams(ChatbotGenerateReplyRequest dto.ChatbotGenerateReplyRequest) service.ChatbotGenerateReplyParams {
 	params := service.ChatbotGenerateReplyParams{
-		Messages:        MapDtoChatbotMessagesToChatbotMessages(ChatbotGenerateReplyRequest.Messages),
-		TodayEventsData: MapDtoChatbotEventDataToChatbotEventData(ChatbotGenerateReplyRequest.TodayEventsData),
-		CalendarsData:   MapDtoChatbotCalendarDataToChatbotCalendarData(ChatbotGenerateReplyRequest.CalendarsData),
+		Messages:          mapDtoChatbotMessagesToChatbotMessages(ChatbotGenerateReplyRequest.Messages),
+		Events:            mapDtoChatbotEventsDataToChatbotEventsData(ChatbotGenerateReplyRequest.EventsData),
+		CalendarsData:     mapDtoChatbotCalendarDataToChatbotCalendarData(ChatbotGenerateReplyRequest.CalendarsData),
+		SelectedEventData: mapDtoChatbotEventDataToChatbotEventData(ChatbotGenerateReplyRequest.SelectedEventData),
+		CurrentDate:       ChatbotGenerateReplyRequest.CurrentDate,
 	}
 	return params
 }
 
-func MapDtoChatbotMessagesToChatbotMessages(dtoChatbotMessages []dto.ChatbotMessage) []service.ChatbotMessage {
+func MapChatbotReplyToDtoChatbotGenerateReplyResponse(chatbotReply service.ChatbotReply) dto.ChatbotGenerateReplyResponse {
+	return dto.ChatbotGenerateReplyResponse{
+		EventId:                   chatbotReply.Id,
+		CalendarId:                chatbotReply.CalendarId,
+		Title:                     chatbotReply.Title,
+		StartTime:                 chatbotReply.StartTime,
+		EndTime:                   chatbotReply.EndTime,
+		Action:                    chatbotReply.Action,
+		FurtherClarifyingQuestion: chatbotReply.FurtherClarifyingQuestion,
+		ChatbotResponse:           chatbotReply.ChatbotResponse,
+	}
+}
+
+func mapDtoChatbotMessagesToChatbotMessages(dtoChatbotMessages []dto.ChatbotMessage) []service.ChatbotMessage {
 	var chatbotMessages []service.ChatbotMessage
 	for _, dtoChatbotMessage := range dtoChatbotMessages {
 		chatbotMessage := service.ChatbotMessage{
@@ -26,23 +41,30 @@ func MapDtoChatbotMessagesToChatbotMessages(dtoChatbotMessages []dto.ChatbotMess
 	return chatbotMessages
 }
 
-func MapDtoChatbotEventDataToChatbotEventData(dtoChatbotEventData []dto.ChatbotEventData) []service.ChatbotEventData {
-	var chatbotEventData []service.ChatbotEventData
-	for _, dtoChatbotEvent := range dtoChatbotEventData {
-		chatbotEvent := service.ChatbotEventData{
-			Id:            dtoChatbotEvent.Id,
-			CalendarId:    dtoChatbotEvent.CalendarId,
-			UserProfileId: dtoChatbotEvent.UserProfileId,
-			Title:         dtoChatbotEvent.Title,
-			StartTime:     dtoChatbotEvent.StartTime,
-			EndTime:       dtoChatbotEvent.EndTime,
-		}
-		chatbotEventData = append(chatbotEventData, chatbotEvent)
+func mapDtoChatbotEventsDataToChatbotEventsData(dtoChatbotEventsData []dto.ChatbotEventData) []service.ChatbotEventData {
+	var chatbotEventsData []service.ChatbotEventData
+	for _, dtoChatbotEventData := range dtoChatbotEventsData {
+		chatbotEventData := mapDtoChatbotEventDataToChatbotEventData(&dtoChatbotEventData)
+		chatbotEventsData = append(chatbotEventsData, *chatbotEventData)
 	}
-	return chatbotEventData
+	return chatbotEventsData
 }
 
-func MapDtoChatbotCalendarDataToChatbotCalendarData(dtoChatbotCalendarData []dto.ChatbotCalendarData) []service.ChatbotCalendarData {
+func mapDtoChatbotEventDataToChatbotEventData(dtoChatbotEventData *dto.ChatbotEventData) *service.ChatbotEventData {
+	if dtoChatbotEventData == nil {
+		return nil
+	}
+
+	return &service.ChatbotEventData{
+		Id:         dtoChatbotEventData.Id,
+		CalendarId: dtoChatbotEventData.CalendarId,
+		Title:      dtoChatbotEventData.Title,
+		StartTime:  dtoChatbotEventData.StartTime,
+		EndTime:    dtoChatbotEventData.EndTime,
+	}
+}
+
+func mapDtoChatbotCalendarDataToChatbotCalendarData(dtoChatbotCalendarData []dto.ChatbotCalendarData) []service.ChatbotCalendarData {
 	var chatbotCalendarData []service.ChatbotCalendarData
 	for _, dtoChatbotCalendar := range dtoChatbotCalendarData {
 		chatbotCalendar := service.ChatbotCalendarData{
@@ -52,20 +74,4 @@ func MapDtoChatbotCalendarDataToChatbotCalendarData(dtoChatbotCalendarData []dto
 		chatbotCalendarData = append(chatbotCalendarData, chatbotCalendar)
 	}
 	return chatbotCalendarData
-}
-
-func MapChatbotReplyToDtoChatbotGenerateReply(chatbotReply service.ChatbotReply) dto.ChatbotGenerateReplyResponse {
-	return dto.ChatbotGenerateReplyResponse{
-		Id:                        chatbotReply.Id,
-		CalendarId:                chatbotReply.CalendarId,
-		CalendarSummary:           chatbotReply.CalendarSummary,
-		UserProfileId:             chatbotReply.UserProfileId,
-		Title:                     chatbotReply.Title,
-		StartTime:                 chatbotReply.StartTime,
-		EndTime:                   chatbotReply.EndTime,
-		Action:                    chatbotReply.Action,
-		FurtherClarifyingQuestion: chatbotReply.FurtherClarifyingQuestion,
-		EditFromDate:              chatbotReply.EditFromDate,
-		ActionConfirmed:           chatbotReply.ActionConfirmed,
-	}
 }
